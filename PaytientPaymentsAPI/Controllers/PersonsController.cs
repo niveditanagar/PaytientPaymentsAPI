@@ -30,9 +30,9 @@ namespace PaytientPaymentsAPI.Controllers
 
         // POST: api/Persons
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] TestModel testModel)
+        public async Task<IActionResult> Post([FromBody] AddPersonRequestModel addPersonRequest)
         {
-            return Ok(await _repo.Post(testModel));
+            return Ok(await _repo.Post(addPersonRequest));
         }
 
         // PUT: api/Persons/5

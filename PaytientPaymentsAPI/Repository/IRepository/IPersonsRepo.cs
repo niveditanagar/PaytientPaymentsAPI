@@ -8,6 +8,6 @@ namespace PaytientPaymentsAPI.Repository.IRepository
 {
     public interface IPersonsRepo
     {
-        Task<PersonsModel> Post(TestModel testModel);
+        Task<PersonsModel> Post(AddPersonRequestModel addPersonRequest);
     }
 }
