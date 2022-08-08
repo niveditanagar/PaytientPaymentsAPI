@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PaytientPaymentsAPI.Data;
+using PaytientPaymentsAPI.Models;
+using PaytientPaymentsAPI.Repository.IRepository;
 
 namespace PaytientPaymentsAPI.Controllers
 {
@@ -12,11 +14,11 @@ namespace PaytientPaymentsAPI.Controllers
     [ApiController]
     public class PaymentsController : ControllerBase
     {
-        private readonly PaytientPaymentsAPIDbContext _dbContext;
+        private readonly IPaymentsRepo _repo;
 
-        public PaymentsController(PaytientPaymentsAPIDbContext dbContext)
+        public PaymentsController(IPaymentsRepo repo)
         {
-            _dbContext = dbContext;
+            _repo = repo;
         }
 
         // GET: api/Payments
@@ -26,17 +28,22 @@ namespace PaytientPaymentsAPI.Controllers
             return Ok();
         }
 
-        // POST: api/Payments
-        [HttpPost]
-        public void Post([FromBody] string value)
+        // POST: api/Payments/one-time-payment
+        [HttpPost("one-time-payment")]
+        public async Task<IActionResult> Post([FromBody] AddOneTimePaymentRequestModel addPaymentRequest)
         {
+            return Ok(await _repo.Post(addPaymentRequest));
         }
 
-        // PUT: api/Payments/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        //POST: api/payments/create-balance
+        [HttpPost]
+        [Route("create-balance")]
+        public async Task<IActionResult> PostBalance([FromBody] AddCreateBalanceRequestModel createBalanceRequest)
         {
+            return Ok(await _repo.PostBalance(createBalanceRequest));
         }
+
+        
         
     }
 }
