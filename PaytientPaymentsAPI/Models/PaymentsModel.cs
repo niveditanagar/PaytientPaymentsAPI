@@ -13,7 +13,7 @@ namespace PaytientPaymentsAPI.Models
 
         public decimal PaymentAmount { get; set; }
 
-        public DateTime? ScheduleDate { get; set; }
+        public DateTime ScheduleDate { get; set; }
 
         public DateTime? PaymentDate { get; set; }
 

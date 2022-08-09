@@ -7,8 +7,6 @@ namespace PaytientPaymentsAPI.Models
 {
     public class AddOneTimePaymentRequestModel
     {
-        public decimal Balance { get; set; }
-
         public decimal PaymentAmount { get; set; }
 
         public int PersonId { get; set; }

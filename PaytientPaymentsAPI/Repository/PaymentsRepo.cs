@@ -19,11 +19,28 @@ namespace PaytientPaymentsAPI.Repository
 
         public async Task<PaymentsModel> Post(AddOneTimePaymentRequestModel addPaymentRequest)
         {
+            var payment = _dbContext.Payments.Where(x => x.PersonId == addPaymentRequest.PersonId).OrderByDescending(x => x.ScheduleDate).FirstOrDefault();
+
+            payment.PaymentAmount = addPaymentRequest.PaymentAmount;
+            payment.PaymentDate = DateTime.Now;
+
+            await _dbContext.SaveChangesAsync();
+
+            DateTime dueDate = payment.ScheduleDate.AddDays(15);
+            if (dueDate.DayOfWeek == DayOfWeek.Saturday)
+            {
+                dueDate = dueDate.AddDays(2);
+            }
+            else if (dueDate.DayOfWeek == DayOfWeek.Sunday)
+            {
+                dueDate = dueDate.AddDays(1);
+            }
+
             var paymentsModel = new PaymentsModel()
             {
-                Balance = addPaymentRequest.Balance,
-                PaymentAmount = addPaymentRequest.PaymentAmount,
-                PersonId = addPaymentRequest.PersonId
+                Balance = (payment.Balance - payment.PaymentAmount),
+                PersonId = addPaymentRequest.PersonId,
+                ScheduleDate = dueDate,
             };
 
             await _dbContext.Payments.AddAsync(paymentsModel);
@@ -32,6 +49,34 @@ namespace PaytientPaymentsAPI.Repository
             return paymentsModel;
 
         }
+
+        //public async Task<PaymentsModel> Post(AddOneTimePaymentRequestModel addPaymentRequest)
+        //{
+        //DateTime dueDate = DateTime.Now.AddDays(15);
+        //    if (dueDate.DayOfWeek == DayOfWeek.Saturday)
+        //    {
+        //        dueDate = dueDate.AddDays(2);
+        //    }
+        //    else if (dueDate.DayOfWeek == DayOfWeek.Sunday)
+        //    {
+        //        dueDate = dueDate.AddDays(1);
+        //    }
+
+        //    var paymentsModel = new PaymentsModel()
+        //    {
+        //        Balance = addPaymentRequest.Balance,
+        //        PaymentAmount = addPaymentRequest.PaymentAmount,
+        //        PersonId = addPaymentRequest.PersonId,
+        //        ScheduleDate = dueDate,
+        //        PaymentDate = DateTime.Now
+        //    };
+
+        //    await _dbContext.Payments.AddAsync(paymentsModel);
+        //    await _dbContext.SaveChangesAsync();
+
+        //    return paymentsModel;
+
+        //}
 
         public async Task<PaymentsModel> PostBalance(AddCreateBalanceRequestModel addCreateBalanceRequest)
         {
