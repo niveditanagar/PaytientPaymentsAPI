@@ -19,9 +19,23 @@ namespace PaytientPaymentsAPI.Repository
 
         public async Task<PaymentsModel> Post(AddOneTimePaymentRequestModel addPaymentRequest)
         {
+            //calculating percentage for match:
+            decimal matchPercentage = 0;
+            if(addPaymentRequest.PaymentAmount < 10)
+            {
+                matchPercentage = (addPaymentRequest.PaymentAmount / 100) * 1;
+            } else if(addPaymentRequest.PaymentAmount < 50)
+            {
+                matchPercentage = (addPaymentRequest.PaymentAmount / 100) * 3;
+            } else
+            {
+                matchPercentage = (addPaymentRequest.PaymentAmount / 100) * 5;
+            }
+
+
             var payment = _dbContext.Payments.Where(x => x.PersonId == addPaymentRequest.PersonId).OrderByDescending(x => x.ScheduleDate).FirstOrDefault();
 
-            payment.PaymentAmount = addPaymentRequest.PaymentAmount;
+            payment.PaymentAmount = addPaymentRequest.PaymentAmount + matchPercentage;
             payment.PaymentDate = DateTime.Now;
 
             await _dbContext.SaveChangesAsync();
