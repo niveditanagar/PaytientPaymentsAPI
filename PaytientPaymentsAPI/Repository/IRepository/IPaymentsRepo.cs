@@ -8,8 +8,8 @@ namespace PaytientPaymentsAPI.Repository.IRepository
 {
     public interface IPaymentsRepo
     {
-        Task<PaymentsModel> Post(AddOneTimePaymentRequestModel addPaymentsRequest);
-
         Task<PaymentsModel> AddPaymentAsync(PaymentsModel paymentsModel);
+
+        Task<PaymentsModel> GetLatestPaymentAsync(int personId);
     }
 }

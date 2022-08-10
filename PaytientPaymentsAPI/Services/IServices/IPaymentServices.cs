@@ -9,5 +9,7 @@ namespace PaytientPaymentsAPI.Services.IServices
     public interface IPaymentService
     {
         Task<PaymentsModel> CreateBalance(int personId, decimal balance);
+
+        Task<PaymentsModel> PostPayment(decimal paymentAmount, int personId);
     }
 }

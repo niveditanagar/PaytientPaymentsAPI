@@ -26,8 +26,7 @@ namespace PaytientPaymentsAPI.Controllers
         [HttpPost("one-time-payment")]
         public async Task<IActionResult> OneTimePayment([FromBody] AddOneTimePaymentRequestModel addPaymentRequest)
         {
-            //return Ok(await _repo.Post(addPaymentRequest));
-            return Ok();
+            return Ok(await paymentService.PostPayment(addPaymentRequest.PaymentAmount, addPaymentRequest.PersonId));
         }
 
         //POST: api/payments/create-balance
