@@ -19,15 +19,7 @@ namespace PaytientPaymentsAPI.Services
 
         public async Task<PaymentsModel> CreateBalance(int personId, decimal balance)
         {
-            DateTime dueDate = DateTime.Now.AddDays(15);
-            if (dueDate.DayOfWeek == DayOfWeek.Saturday)
-            {
-                dueDate = dueDate.AddDays(2);
-            }
-            else if (dueDate.DayOfWeek == DayOfWeek.Sunday)
-            {
-                dueDate = dueDate.AddDays(1);
-            }
+            DateTime dueDate = GetScheduleDate(DateTime.Now);
 
             var paymentsModel = new PaymentsModel()
             {
@@ -43,7 +35,44 @@ namespace PaytientPaymentsAPI.Services
 
         public async Task<PaymentsModel> PostPayment(decimal paymentAmount, int personId)
         {
-            //calculating percentage for match:
+            decimal matchAmount = GetMatchAmount(paymentAmount);
+
+            var payment = await paymentRepo.GetLatestPaymentAsync(personId);
+            payment.PaymentAmount = paymentAmount + matchAmount;
+            payment.PaymentDate = DateTime.Now;
+           
+            DateTime dueDate = GetScheduleDate(payment.ScheduleDate);
+            
+            var newBalance = new PaymentsModel()
+            {
+                Balance = (payment.Balance - payment.PaymentAmount),
+                PersonId = personId,
+                ScheduleDate = dueDate,
+            };
+
+            await paymentRepo.AddPaymentAsync(newBalance);
+
+            return newBalance;
+        }
+
+        private DateTime GetScheduleDate(DateTime date)
+        {
+            DateTime dueDate = date.AddDays(15);
+            if (dueDate.DayOfWeek == DayOfWeek.Saturday)
+            {
+                dueDate = dueDate.AddDays(2);
+            }
+            else if (dueDate.DayOfWeek == DayOfWeek.Sunday)
+            {
+                dueDate = dueDate.AddDays(1);
+            }
+
+            return dueDate;
+        }
+
+        //calculating percentage for match
+        private decimal GetMatchAmount(decimal paymentAmount)
+        {
             decimal matchPercentage = 0;
             if (paymentAmount < 10)
             {
@@ -58,30 +87,7 @@ namespace PaytientPaymentsAPI.Services
                 matchPercentage = (paymentAmount / 100) * 5;
             }
 
-            var payment = await paymentRepo.GetLatestPaymentAsync(personId);
-            payment.PaymentAmount = paymentAmount + matchPercentage;
-            payment.PaymentDate = DateTime.Now;
-           
-            DateTime dueDate = payment.ScheduleDate.AddDays(15);
-            if (dueDate.DayOfWeek == DayOfWeek.Saturday)
-            {
-                dueDate = dueDate.AddDays(2);
-            }
-            else if (dueDate.DayOfWeek == DayOfWeek.Sunday)
-            {
-                dueDate = dueDate.AddDays(1);
-            }
-
-            var newBalance = new PaymentsModel()
-            {
-                Balance = (payment.Balance - payment.PaymentAmount),
-                PersonId = personId,
-                ScheduleDate = dueDate,
-            };
-
-            await paymentRepo.AddPaymentAsync(newBalance);
-
-            return newBalance;
+            return matchPercentage;
         }
     }
 }
