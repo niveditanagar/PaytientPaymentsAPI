@@ -18,12 +18,12 @@ namespace PaytientPaymentsAPI.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<PersonsModel> Post(AddPersonRequestModel addPersonRequest)
+        public async Task<PersonsModel> CreatePerson(string LastName, string FirstName)
         {
             var personModel = new PersonsModel()
             {
-                FirstName = addPersonRequest.FirstName,
-                LastName = addPersonRequest.LastName
+                FirstName = FirstName,
+                LastName = LastName
             };
 
             await _dbContext.Persons.AddAsync(personModel);

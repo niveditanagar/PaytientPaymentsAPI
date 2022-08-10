@@ -20,26 +20,14 @@ namespace PaytientPaymentsAPI.Controllers
         {
             _repo = repo;
         }
-
-        // GET: api/Persons
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
+        
         // POST: api/Persons
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] AddPersonRequestModel addPersonRequest)
+        public async Task<IActionResult> CreatePerson([FromBody] AddPersonRequest addPersonRequest)
         {
-            return Ok(await _repo.Post(addPersonRequest));
+            return Ok(await _repo.CreatePerson(addPersonRequest.LastName, addPersonRequest.FirstName));
         }
-
-        // PUT: api/Persons/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+        
         
     }
 }

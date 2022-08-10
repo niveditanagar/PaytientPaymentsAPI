@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PaytientPaymentsAPI.Models
 {
-    public class AddPersonRequestModel
+    public class AddPersonRequest
     {
         public string LastName { get; set; }
 

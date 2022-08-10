@@ -20,14 +20,7 @@ namespace PaytientPaymentsAPI.Controllers
         {
             _repo = repo;
         }
-
-        // GET: api/Payments
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok();
-        }
-
+        
         // POST: api/Payments/one-time-payment
         [HttpPost("one-time-payment")]
         public async Task<IActionResult> Post([FromBody] AddOneTimePaymentRequestModel addPaymentRequest)
