@@ -63,30 +63,13 @@ namespace PaytientPaymentsAPI.Repository
             return paymentsModel;
 
         }
-        
-        public async Task<PaymentsModel> PostBalance(AddCreateBalanceRequestModel addCreateBalanceRequest)
+
+        public async Task<PaymentsModel> AddPaymentAsync(PaymentsModel paymentsModel)
         {
-            DateTime dueDate = DateTime.Now.AddDays(15);
-            if (dueDate.DayOfWeek == DayOfWeek.Saturday)
-            {
-                dueDate = dueDate.AddDays(2);
-            } else if (dueDate.DayOfWeek == DayOfWeek.Sunday)
-            {
-                dueDate = dueDate.AddDays(1);
-            }
-
-            var paymentsModel = new PaymentsModel()
-            {
-                PersonId = addCreateBalanceRequest.PersonId,
-                Balance = addCreateBalanceRequest.Balance,
-                ScheduleDate = dueDate
-            };
-
             await _dbContext.Payments.AddAsync(paymentsModel);
             await _dbContext.SaveChangesAsync();
 
             return paymentsModel;
-
         }
     }
 }

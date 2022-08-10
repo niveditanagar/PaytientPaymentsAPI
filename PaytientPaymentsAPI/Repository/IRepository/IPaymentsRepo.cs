@@ -10,6 +10,6 @@ namespace PaytientPaymentsAPI.Repository.IRepository
     {
         Task<PaymentsModel> Post(AddOneTimePaymentRequestModel addPaymentsRequest);
 
-        Task<PaymentsModel> PostBalance(AddCreateBalanceRequestModel addCreateBalanceRequest);
+        Task<PaymentsModel> AddPaymentAsync(PaymentsModel paymentsModel);
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using PaytientPaymentsAPI.Data;
 using PaytientPaymentsAPI.Models;
 using PaytientPaymentsAPI.Repository.IRepository;
+using PaytientPaymentsAPI.Services.IServices;
 
 namespace PaytientPaymentsAPI.Controllers
 {
@@ -14,26 +15,27 @@ namespace PaytientPaymentsAPI.Controllers
     [ApiController]
     public class PaymentsController : ControllerBase
     {
-        private readonly IPaymentsRepo _repo;
+        private readonly IPaymentService paymentService;
 
-        public PaymentsController(IPaymentsRepo repo)
+        public PaymentsController(IPaymentService paymentService)
         {
-            _repo = repo;
+            this.paymentService = paymentService;
         }
         
         // POST: api/Payments/one-time-payment
         [HttpPost("one-time-payment")]
-        public async Task<IActionResult> Post([FromBody] AddOneTimePaymentRequestModel addPaymentRequest)
+        public async Task<IActionResult> OneTimePayment([FromBody] AddOneTimePaymentRequestModel addPaymentRequest)
         {
-            return Ok(await _repo.Post(addPaymentRequest));
+            //return Ok(await _repo.Post(addPaymentRequest));
+            return Ok();
         }
 
         //POST: api/payments/create-balance
         [HttpPost]
         [Route("create-balance")]
-        public async Task<IActionResult> PostBalance([FromBody] AddCreateBalanceRequestModel createBalanceRequest)
+        public async Task<IActionResult> CreateBalance([FromBody] AddCreateBalanceRequestModel createBalanceRequest)
         {
-            return Ok(await _repo.PostBalance(createBalanceRequest));
+            return Ok(await paymentService.CreateBalance(createBalanceRequest.PersonId, createBalanceRequest.Balance));
         }
 
         
