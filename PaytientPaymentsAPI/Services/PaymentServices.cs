@@ -11,14 +11,21 @@ namespace PaytientPaymentsAPI.Services
     public class PaymentService : IPaymentService
     {
         private readonly IPaymentsRepo paymentRepo;
+        private readonly IPersonsRepo personsRepo;
 
-        public PaymentService(IPaymentsRepo paymentRepo)
+        public PaymentService(IPaymentsRepo paymentRepo, IPersonsRepo personsRepo)
         {
             this.paymentRepo = paymentRepo;
+            this.personsRepo = personsRepo;
         }
 
         public async Task<PaymentsModel> CreateBalance(int personId, decimal balance)
         {
+            if (!await personsRepo.PersonExists(personId))
+            {
+                throw new PaymentException("This person does not exists.");
+            }
+
             DateTime dueDate = GetScheduleDate(DateTime.Now);
 
             var paymentsModel = new PaymentsModel()
@@ -35,9 +42,29 @@ namespace PaytientPaymentsAPI.Services
 
         public async Task<PaymentsModel> PostPayment(decimal paymentAmount, int personId)
         {
+            if (paymentAmount <= 0)
+            {
+                throw new PaymentException("Payment Amount must be greater than 0.");
+            }
+
+            if (!await personsRepo.PersonExists(personId))
+            {
+                throw new PaymentException("This person does not exists.");
+            }
+
             decimal matchAmount = GetMatchAmount(paymentAmount);
 
             var payment = await paymentRepo.GetLatestPaymentAsync(personId);
+            if (payment == null)
+            {
+                throw new PaymentException("User does not have a balance.");
+            }
+
+            if (payment.Balance <= 0)
+            {
+                throw new PaymentException("Balance has been paid off.");
+            }
+
             payment.PaymentAmount = paymentAmount + matchAmount;
             payment.PaymentDate = DateTime.Now;
            

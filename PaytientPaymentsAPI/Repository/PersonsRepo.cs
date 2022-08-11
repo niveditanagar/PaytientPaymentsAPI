@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PaytientPaymentsAPI.Data;
 using PaytientPaymentsAPI.Models;
 using PaytientPaymentsAPI.Repository.IRepository;
@@ -31,6 +32,11 @@ namespace PaytientPaymentsAPI.Repository
 
             return personModel;
             
+        }
+
+        public async Task<bool> PersonExists(int personId)
+        {
+            return await _dbContext.Persons.AnyAsync(x => x.Id == personId);
         }
     }
 }

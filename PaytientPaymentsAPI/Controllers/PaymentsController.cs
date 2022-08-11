@@ -26,7 +26,14 @@ namespace PaytientPaymentsAPI.Controllers
         [HttpPost("one-time-payment")]
         public async Task<IActionResult> OneTimePayment([FromBody] AddOneTimePaymentRequestModel addPaymentRequest)
         {
-            return Ok(await paymentService.PostPayment(addPaymentRequest.PaymentAmount, addPaymentRequest.PersonId));
+            try
+            {
+                return Ok(await paymentService.PostPayment(addPaymentRequest.PaymentAmount, addPaymentRequest.PersonId));
+            }
+            catch (PaymentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         //POST: api/payments/create-balance
@@ -34,7 +41,13 @@ namespace PaytientPaymentsAPI.Controllers
         [Route("create-balance")]
         public async Task<IActionResult> CreateBalance([FromBody] AddCreateBalanceRequestModel createBalanceRequest)
         {
-            return Ok(await paymentService.CreateBalance(createBalanceRequest.PersonId, createBalanceRequest.Balance));
+            try
+            {
+                return Ok(await paymentService.CreateBalance(createBalanceRequest.PersonId, createBalanceRequest.Balance));
+            } catch (PaymentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         

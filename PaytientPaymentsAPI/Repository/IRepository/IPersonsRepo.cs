@@ -9,5 +9,7 @@ namespace PaytientPaymentsAPI.Repository.IRepository
     public interface IPersonsRepo
     {
         Task<PersonsModel> CreatePerson(string LastName, string FirstName);
+
+        Task<bool> PersonExists(int personId);
     }
 }
