@@ -94,7 +94,7 @@ namespace PaytientPaymentsAPI.Services
                 dueDate = dueDate.AddDays(1);
             }
 
-            return dueDate;
+            return dueDate.Date;
         }
 
         //calculating percentage for match
